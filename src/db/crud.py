@@ -1,10 +1,11 @@
 """Модуль с CRUD-операциями для работы с базой данных."""
 import datetime
-from sqlalchemy import func
+from sqlalchemy import func, case
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
 from src.db.models import Activity, ActivityType, ActivityLog
+
 
 
 async def create_activity(
@@ -129,7 +130,7 @@ async def get_stats_for_period(
             Activity.name,
             Activity.type,
             func.sum(ActivityLog.value_minutes).label("total_minutes"),
-            func.sum(func.cast(ActivityLog.value_bool, func.Integer())).label(
+            func.sum(case((ActivityLog.value_bool, 1), else_=0)).label(
                 "total_checks"
             ),
         )

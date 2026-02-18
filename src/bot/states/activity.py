@@ -16,6 +16,6 @@ class TrackActivity(StatesGroup):
 
 class Download(StatesGroup):
     """Состояния для процесса скачивания исходников."""
-    waiting_for_start_date = State()
-    waiting_for_end_date = State()
+    choosing_start_date = State()
+    choosing_end_date = State()
 
