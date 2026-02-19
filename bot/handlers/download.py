@@ -7,12 +7,12 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import BufferedInputFile
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.bot.keyboards import inline as inline_kb
-from src.bot.keyboards.callback_data import CalendarCallback
-from src.bot.states.activity import Download
-from src.db import crud
-from src.db.database import get_async_session
-from src.db.models import ActivityType
+from bot.keyboards import inline as inline_kb
+from bot.keyboards.callback_data import CalendarCallback
+from bot.states.activity import Download
+from db import crud
+from db.database import get_async_session
+from db.models import ActivityType
 
 router = Router()
 

@@ -5,10 +5,10 @@ import datetime
 from aiogram import Router, F, types
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.bot.keyboards import inline as inline_kb
-from src.db import crud
-from src.db.database import get_async_session
-from src.db.models import ActivityType
+from bot.keyboards import inline as inline_kb
+from db import crud
+from db.database import get_async_session
+from db.models import ActivityType
 
 router = Router()
 

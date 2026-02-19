@@ -5,11 +5,11 @@ from aiogram.fsm.context import FSMContext
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import IntegrityError
 
-from src.bot.keyboards.inline import get_activity_type_keyboard
-from src.bot.states.activity import AddActivity
-from src.db import crud
-from src.db.database import get_async_session
-from src.db.models import ActivityType
+from bot.keyboards.inline import get_activity_type_keyboard
+from bot.states.activity import AddActivity
+from db import crud
+from db.database import get_async_session
+from db.models import ActivityType
 
 router = Router()
 

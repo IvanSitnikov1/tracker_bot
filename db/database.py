@@ -6,12 +6,12 @@ from sqlalchemy.ext.asyncio import (
     create_async_engine,
 )
 
-from src.core.config import settings
+from core.config import settings
 
 # Создаем асинхронный "движок" для взаимодействия с БД.
 # echo=True полезно для отладки, т.к. выводит все SQL-запросы в консоль.
 async_engine = create_async_engine(
-    url=settings.db_url,
+    url=settings.DATABASE_URL,
     echo=False,  # В реальном приложении лучше поставить False
 )
 

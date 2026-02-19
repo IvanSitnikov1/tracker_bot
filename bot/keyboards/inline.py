@@ -1,11 +1,10 @@
 """Модуль с inline-клавиатурами."""
 import calendar
-import datetime
 
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
-from src.bot.keyboards.callback_data import CalendarCallback
-from src.db.models import Activity, ActivityLog, ActivityType
+from bot.keyboards.callback_data import CalendarCallback
+from db.models import Activity, ActivityLog, ActivityType
 
 
 def get_activity_type_keyboard() -> InlineKeyboardMarkup:

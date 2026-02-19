@@ -2,23 +2,14 @@
 
 import asyncio
 import logging
-import os
-import sys
-
-# Добавляем корневую директорию проекта в sys.path
-# Это необходимо для корректной работы импортов, когда скрипт запускается напрямую
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from aiogram import Bot, Dispatcher, types
 from aiogram.fsm.storage.memory import MemoryStorage
 from fastapi import FastAPI
 
-from src.bot.handlers import common as common_handlers
-from src.bot.handlers import add_activity as add_activity_handlers
-from src.bot.handlers import track_activity as track_activity_handlers
-from src.bot.handlers import download as download_handlers
-from src.bot.handlers import stats as stats_handlers
-from src.core.config import settings
+from bot.handlers import stats as stats_handlers, download as download_handlers, \
+    track_activity as track_activity_handlers, common as common_handlers, add_activity as add_activity_handlers
+from core.config import settings
 
 
 # Настройка логирования
@@ -27,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 # Инициализация бота и диспетчера
 storage = MemoryStorage()
-bot = Bot(token=settings.bot_token)
+bot = Bot(token=settings.BOT_TOKEN)
 dp = Dispatcher(storage=storage)
 
 # Регистрация роутеров
@@ -41,8 +32,8 @@ dp.include_router(stats_handlers.router)
 app = FastAPI()
 
 # URL для вебхука, должен быть защищен (https) и доступен извне
-WEBHOOK_PATH = f"/bot/{settings.bot_token}"
-WEBHOOK_URL = "https://ivanches.info" + WEBHOOK_PATH
+WEBHOOK_PATH = f"/bot/{settings.BOT_TOKEN}"
+WEBHOOK_URL = settings.SERVER_URL + WEBHOOK_PATH
 
 
 @app.on_event("startup")

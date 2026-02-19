@@ -17,8 +17,9 @@ class Settings(BaseSettings):
         extra="ignore",
     )
 
-    bot_token: str
-    db_url: str = "sqlite+aiosqlite:///./tracker.db"
+    BOT_TOKEN: str
+    DATABASE_URL: str
+    SERVER_URL: str
 
 
 settings = Settings()

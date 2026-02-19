@@ -4,8 +4,7 @@ from sqlalchemy import func, case
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
-from src.db.models import Activity, ActivityType, ActivityLog
-
+from db.models import Activity, ActivityType, ActivityLog
 
 
 async def create_activity(

@@ -4,7 +4,7 @@ from aiogram import Router
 from aiogram.filters import CommandStart, Command
 from aiogram.types import Message
 
-from src.bot.keyboards.reply import get_main_menu_keyboard
+from bot.keyboards.reply import get_main_menu_keyboard
 
 router = Router()
 
