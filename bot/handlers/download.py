@@ -48,6 +48,7 @@ async def handle_day_selection(
 ):
     """Обрабатывает выбор дня в календаре."""
     current_state = await state.get_state()
+    user_id = callback.from_user.id
     selected_date = datetime.date(
         year=callback_data.year,
         month=callback_data.month,
@@ -60,9 +61,9 @@ async def handle_day_selection(
         await callback.message.edit_text(
             f"Выбрана дата начала: <b>{selected_date.strftime('%d.%m.%Y')}</b>\n\n"
             "Теперь выберите дату конца периода:",
-            reply_markup=callback.message.reply_markup, # Оставляем тот же календарь
+            reply_markup=callback.message.reply_markup,  # Оставляем тот же календарь
         )
-    
+
     elif current_state == Download.choosing_end_date:
         user_data = await state.get_data()
         start_date = user_data["start_date"]
@@ -75,24 +76,40 @@ async def handle_day_selection(
             return
 
         await state.clear()
-        await callback.message.edit_text(f"Готовлю файлы за период с "
-                                          f"<b>{start_date.strftime('%d.%m.%Y')}</b> по "
-                                          f"<b>{end_date.strftime('%d.%m.%Y')}</b>...")
-        
+        await callback.message.edit_text(
+            f"Готовлю файлы за период с "
+            f"<b>{start_date.strftime('%d.%m.%Y')}</b> по "
+            f"<b>{end_date.strftime('%d.%m.%Y')}</b>..."
+        )
+
         # Запускаем генерацию и отправку файлов
-        await generate_and_send_files(callback.message, start_date, end_date)
+        await generate_and_send_files(
+            message=callback.message,
+            user_id=user_id,
+            start_date=start_date,
+            end_date=end_date,
+        )
 
     await callback.answer()
 
 
 async def generate_and_send_files(
-    message: types.Message, start_date: datetime.date, end_date: datetime.date
+    message: types.Message,
+    user_id: int,
+    start_date: datetime.date,
+    end_date: datetime.date,
 ):
     """Генерирует и отправляет файлы с логами за указанный период."""
     async for session in get_async_session():
         db: AsyncSession = session
-        all_activities = await crud.get_all_activities(db)
-        logs = await crud.get_logs_for_period(db, start_date, end_date)
+        all_activities = await crud.get_user_activities(db, user_id=user_id)
+        if not all_activities:
+            await message.answer("У вас нет активностей для экспорта.")
+            return
+            
+        logs = await crud.get_user_logs_for_period(
+            db, user_id=user_id, start_date=start_date, end_date=end_date
+        )
 
         grouped_logs = {}
         for log in logs:
@@ -106,10 +123,10 @@ async def generate_and_send_files(
             md_content = f"---\n"
             for activity in all_activities:
                 log = daily_logs.get(activity.id)
-                value = 0
+                value = "false" if activity.type == ActivityType.CHECKBOX else 0
                 if log:
                     if activity.type == ActivityType.CHECKBOX:
-                        value = log.value_bool if log.value_bool is not None else False
+                        value = str(log.value_bool).lower() if log.value_bool is not None else "false"
                     elif activity.type == ActivityType.TIME:
                         value = log.value_minutes if log.value_minutes is not None else 0
                 md_content += f"{activity.name}: {value}\n"

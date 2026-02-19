@@ -10,6 +10,7 @@ from sqlalchemy import (
     ForeignKey,
     Integer,
     String,
+    UniqueConstraint,
 )
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
@@ -28,13 +29,17 @@ class ActivityType(enum.Enum):
 class Activity(Base):
     """Модель для хранения активностей."""
     __tablename__ = "activities"
+    __table_args__ = (
+        UniqueConstraint("user_id", "name", name="_user_activity_uc"),
+    )
 
     id: Mapped[int] = mapped_column(
         Integer,
         primary_key=True,
         autoincrement=True,
     )
-    name: Mapped[str] = mapped_column(String(100), unique=True, nullable=False)
+    user_id: Mapped[int] = mapped_column(Integer, nullable=False, index=True)
+    name: Mapped[str] = mapped_column(String(100), nullable=False)
     type: Mapped[ActivityType] = mapped_column(
         Enum(ActivityType),
         nullable=False,

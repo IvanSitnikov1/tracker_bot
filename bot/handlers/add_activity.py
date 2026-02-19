@@ -47,7 +47,13 @@ async def handle_new_activity_name(
     message: types.Message, state: FSMContext
 ):
     """Сохраняет новую активность в базу данных."""
+    if not message.from_user:
+        # Это может произойти, если сообщение пришло от канала, а не от пользователя
+        await message.answer("Не удалось определить пользователя.")
+        return
+
     activity_name = message.text
+    user_id = message.from_user.id
     user_data = await state.get_data()
     activity_type_str = user_data["activity_type"]
     activity_type = ActivityType[activity_type_str.upper()]
@@ -55,18 +61,20 @@ async def handle_new_activity_name(
     async for session in get_async_session():
         db: AsyncSession = session
         try:
-            # Проверяем, существует ли активность с таким именем
-            existing_activity = await crud.get_activity_by_name(db, activity_name)
+            # Проверяем, существует ли активность с таким именем у этого пользователя
+            existing_activity = await crud.get_activity_by_name(
+                db, user_id=user_id, name=activity_name
+            )
             if existing_activity:
                 await message.answer(
-                    f"Активность с названием '<b>{activity_name}</b>' уже существует. "
+                    f"Активность с названием '<b>{activity_name}</b>' у вас уже существует. "
                     "Попробуйте другое название."
                 )
                 return
 
             # Создаем новую активность
             await crud.create_activity(
-                db=db, name=activity_name, type=activity_type
+                db=db, user_id=user_id, name=activity_name, type=activity_type
             )
             await state.clear()
             await message.answer(

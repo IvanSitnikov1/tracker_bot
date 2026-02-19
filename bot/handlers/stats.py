@@ -25,6 +25,7 @@ async def handle_stats_start(message: types.Message):
 @router.callback_query(F.data.startswith("stats:"))
 async def handle_stats_period(callback: types.CallbackQuery):
     """Обрабатывает выбор периода и показывает статистику."""
+    user_id = callback.from_user.id
     period = callback.data.split(":")[1]
     today = datetime.date.today()
 
@@ -43,11 +44,15 @@ async def handle_stats_period(callback: types.CallbackQuery):
         ) - datetime.timedelta(days=1)
         period_text = "за текущий месяц"
     else:
+        # В будущем здесь может быть обработка кастомного периода
+        await callback.answer("Неизвестный период.", show_alert=True)
         return
 
     async for session in get_async_session():
         db: AsyncSession = session
-        stats = await crud.get_stats_for_period(db, start_date, end_date)
+        stats = await crud.get_user_stats_for_period(
+            db, user_id=user_id, start_date=start_date, end_date=end_date
+        )
 
         if not stats:
             await callback.message.edit_text(
