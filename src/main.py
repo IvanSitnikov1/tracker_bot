@@ -42,7 +42,7 @@ app = FastAPI()
 
 # URL для вебхука, должен быть защищен (https) и доступен извне
 WEBHOOK_PATH = f"/bot/{settings.bot_token}"
-WEBHOOK_URL = "YOUR_WEBHOOK_BASE_URL" + WEBHOOK_PATH
+WEBHOOK_URL = "https://ivanches.info" + WEBHOOK_PATH
 
 
 @app.on_event("startup")
