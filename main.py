@@ -8,7 +8,8 @@ from aiogram.fsm.storage.memory import MemoryStorage
 from fastapi import FastAPI
 
 from bot.handlers import stats as stats_handlers, download as download_handlers, \
-    track_activity as track_activity_handlers, common as common_handlers, add_activity as add_activity_handlers
+    track_activity as track_activity_handlers, common as common_handlers, \
+    add_activity as add_activity_handlers, help as help_handlers
 from core.config import settings
 
 
@@ -27,6 +28,7 @@ dp.include_router(add_activity_handlers.router)
 dp.include_router(track_activity_handlers.router)
 dp.include_router(download_handlers.router)
 dp.include_router(stats_handlers.router)
+dp.include_router(help_handlers.router)
 
 # Создание экземпляра FastAPI
 app = FastAPI()

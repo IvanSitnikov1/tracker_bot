@@ -12,6 +12,7 @@ class AddActivity(StatesGroup):
 class TrackActivity(StatesGroup):
     """Состояния для отслеживания активностей."""
     running_timers = State()
+    waiting_for_manual_time = State()
 
 
 class Download(StatesGroup):

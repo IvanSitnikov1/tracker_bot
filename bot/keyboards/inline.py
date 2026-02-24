@@ -3,7 +3,7 @@ import calendar
 
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
-from bot.keyboards.callback_data import CalendarCallback
+from bot.keyboards.callback_data import ActivityCallback, CalendarCallback
 from db.models import Activity, ActivityLog, ActivityType
 
 
@@ -35,24 +35,41 @@ async def get_activities_keyboard(
     buttons = []
     for activity in activities:
         log = today_logs.get(activity.id)
+        button_row = []
         
         if activity.type == ActivityType.CHECKBOX:
             status_icon = "✅" if log and log.value_bool else "☑️"
             button_text = f"{status_icon} {activity.name}"
-        
+            callback_data = ActivityCallback(action="track", activity_id=activity.id).pack()
+            button_row.append(
+                InlineKeyboardButton(text=button_text, callback_data=callback_data)
+            )
+
         elif activity.type == ActivityType.TIME:
             is_running = activity.id in running_timers
             status_icon = "⏹️" if is_running else "▶️"
             total_minutes = log.value_minutes if log and log.value_minutes else 0
             button_text = f"{status_icon} {activity.name} ({total_minutes} мин.)"
             
+            # Кнопка для старт/стоп
+            button_row.append(InlineKeyboardButton(
+                text=button_text,
+                callback_data=ActivityCallback(action="track", activity_id=activity.id).pack()
+            ))
+            # Кнопка для ручного ввода
+            button_row.append(InlineKeyboardButton(
+                text="✏️",
+                callback_data=ActivityCallback(action="manual_time", activity_id=activity.id).pack()
+            ))
+            
         else:
             button_text = activity.name
+            callback_data = ActivityCallback(action="track", activity_id=activity.id).pack()
+            button_row.append(
+                InlineKeyboardButton(text=button_text, callback_data=callback_data)
+            )
 
-        callback_data = f"track:{activity.id}"
-        buttons.append(
-            [InlineKeyboardButton(text=button_text, callback_data=callback_data)]
-        )
+        buttons.append(button_row)
     
     keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
     return keyboard
