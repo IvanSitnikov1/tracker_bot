@@ -162,7 +162,7 @@ async def handle_manual_time_input(message: types.Message, state: FSMContext):
         await message.answer("Пожалуйста, введите целое число.")
         return
 
-    minutes_to_add = int(message.text)
+    new_minutes_value = int(message.text)
     user_id = message.from_user.id
     user_data = await state.get_data()
     activity_id = user_data.get("manual_time_activity_id")
@@ -177,9 +177,7 @@ async def handle_manual_time_input(message: types.Message, state: FSMContext):
         log = await crud.get_or_create_log(
             db, user_id=user_id, activity_id=activity_id, log_date=today
         )
-        if log.value_minutes is None:
-            log.value_minutes = 0
-        log.value_minutes += minutes_to_add
+        log.value_minutes = new_minutes_value
         await db.commit()
 
         if message_id_to_edit:
@@ -201,6 +199,6 @@ async def handle_manual_time_input(message: types.Message, state: FSMContext):
         except Exception:
             pass
 
-    confirm_msg = await message.answer(f"✅ Добавлено {minutes_to_add} мин.")
+    confirm_msg = await message.answer(f"✅ Установлено {new_minutes_value} мин.")
     await asyncio.sleep(3)
     await confirm_msg.delete()
