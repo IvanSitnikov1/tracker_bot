@@ -20,3 +20,9 @@ class Download(StatesGroup):
     choosing_start_date = State()
     choosing_end_date = State()
 
+
+class Stats(StatesGroup):
+    """Состояния для процесса просмотра статистики."""
+    choosing_start_date = State()
+    choosing_end_date = State()
+

@@ -4,6 +4,7 @@ import datetime
 
 from aiogram import F, Router, types
 from aiogram.fsm.context import FSMContext
+from aiogram.filters.state import StateFilter
 from aiogram.types import BufferedInputFile
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -40,7 +41,10 @@ async def handle_calendar_navigation(
     await callback.answer()
 
 
-@router.callback_query(CalendarCallback.filter(F.action == "DAY"))
+@router.callback_query(
+    CalendarCallback.filter(F.action == "DAY"),
+    StateFilter(Download.choosing_start_date, Download.choosing_end_date),
+)
 async def handle_day_selection(
     callback: types.CallbackQuery,
     callback_data: CalendarCallback,

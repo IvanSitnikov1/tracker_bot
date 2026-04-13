@@ -82,6 +82,9 @@ def get_stats_period_keyboard() -> InlineKeyboardMarkup:
             InlineKeyboardButton(text="За сегодня", callback_data="stats:day"),
             InlineKeyboardButton(text="За неделю", callback_data="stats:week"),
             InlineKeyboardButton(text="За месяц", callback_data="stats:month"),
+        ],
+        [
+            InlineKeyboardButton(text="Выбрать период", callback_data="stats:custom"),
         ]
     ]
     keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
